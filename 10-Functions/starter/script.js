@@ -104,7 +104,9 @@ function outter(){
     }
 }
 
-outter()
-inner()
+outter();
+inner();
 
 console.dir(inner)
+
+//see mapty final for more bind important

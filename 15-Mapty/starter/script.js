@@ -11,38 +11,53 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
-navigator.geolocation.getCurrentPosition(function(location){
-    const { latitude } = location.coords;
-    const { longitude } = location.coords;
+let map, mapEvents;
 
-    const coords = [latitude, longitude]
+if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(location){
+        const { latitude } = location.coords;
+        const { longitude } = location.coords;
+        const coords = [latitude, longitude]
 
-    //leaflet API
-    //L is the leaflet api
-    //it brings the map into our website
-    const map = L.map('map').setView(coords, 13); //coordinates and zoom level
+        //leaflet API
+        //L is the leaflet api
+        //it brings the map into our website
+        map = L.map('map').setView(coords, 13); //coordinates and zoom level
 
-    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-    L.marker(coords).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup();
+        L.marker(coords).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup();
+        
+        //this is not map function
+        //it is a function belongs to leaflet 
+        map.on('click',function(mapE){
 
+            mapEvents = mapE;
+            form.classList.remove('hidden');
+            inputDistance.focus();
+        })
 
-    var icon = L.icon({
-        iconUrl : 'icon.png',
-
-        iconSize: [40,30]
+    },function(){
+        alert('Can\'t get your location')
     })
-    //this is not map function
-    //it is a function belongs to leaflet 
-    map.on('click',function(mapEvents){
-        console.log(mapEvents);
-        const { lat , lng } = mapEvents.latlng;
+}
 
-        L.marker([lat, lng],{icon: icon}).addTo(map).bindPopup('Workout').openPopup();
-    })
+form.addEventListener('submit',function(e){
 
-},function(){
-    alert('Can\'t get your location')
+    e.preventDefault();
+
+    inputCadence.value = inputDistance.value = inputDuration.value = inputElevation.value = '';
+
+    const { lat , lng } = mapEvents.latlng;
+
+    L.marker([lat, lng]).addTo(map).bindPopup(L.popup({maxWidth: 85, minWidth:10, autoClose: false, closeOnClick: false, className: 'running-popup'}))
+    .setPopupContent('Workout').openPopup();
+});
+
+inputType.addEventListener('change', function(){
+    console.log('hi')
+    inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
+    inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
 })
