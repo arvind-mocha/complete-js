@@ -36,7 +36,7 @@ const showRecipe = async function(){
       ingredints: recipe.ingredints
     }
 
-    console.log(recipe)
+    console.log(recipe) 
   }catch(err){
     console.error(err)
   }
