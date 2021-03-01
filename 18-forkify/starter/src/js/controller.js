@@ -43,5 +43,3 @@ const showRecipe = async function(){
 }
 
 showRecipe()
-
-'hi my man'
